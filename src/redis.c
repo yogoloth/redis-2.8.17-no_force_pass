@@ -1345,6 +1345,7 @@ void initServerConfig(void) {
     server.rdb_filename = zstrdup(REDIS_DEFAULT_RDB_FILENAME);
     server.aof_filename = zstrdup(REDIS_DEFAULT_AOF_FILENAME);
     server.requirepass = NULL;
+    server.force_auth = CONFIG_DEFAULT_FORCE_AUTH; //wangjunling
     server.rdb_compression = REDIS_DEFAULT_RDB_COMPRESSION;
     server.rdb_checksum = REDIS_DEFAULT_RDB_CHECKSUM;
     server.stop_writes_on_bgsave_err = REDIS_DEFAULT_STOP_WRITES_ON_BGSAVE_ERROR;
@@ -2013,12 +2014,12 @@ int processCommand(redisClient *c) {
 
     //wangjunling: no force authenticated
     /* Check if the user is authenticated */
-    //if (server.requirepass && !c->authenticated && c->cmd->proc != authCommand)
-    //{
-    //    flagTransaction(c);
-    //    addReply(c,shared.noautherr);
-    //    return REDIS_OK;
-    //}
+    if (server.force_auth && server.requirepass && !c->authenticated && c->cmd->proc != authCommand)
+    {
+        flagTransaction(c);
+        addReply(c,shared.noautherr);
+        return REDIS_OK;
+    }
 
     /* Handle the maxmemory directive.
      *
