@@ -12,6 +12,29 @@ id=2 addr=127.0.0.1:51390 fd=5 name= age=41 idle=3 flags=N db=0 sub=0 psub=0 mul
 id=3 addr=127.0.0.1:51417 fd=6 name= age=28 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client authenticated=0
 
 
+sample2:
+# src/redis-cli
+127.0.0.1:6379> get a
+"1"
+127.0.0.1:6379> config set force-auth no
+OK
+127.0.0.1:6379> config set requirepass 123456
+OK
+127.0.0.1:6379> client list
+id=2 addr=127.0.0.1:37444 fd=5 name= age=43 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client authenticated=0
+127.0.0.1:6379> config set force-auth yes
+OK
+127.0.0.1:6379> get a
+(error) NOAUTH Authentication required.
+127.0.0.1:6379> auth 123456
+OK
+127.0.0.1:6379> get a
+"1"
+127.0.0.1:6379> client list
+id=2 addr=127.0.0.1:37444 fd=5 name= age=104 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client authenticated=1
+127.0.0.1:6379>
+
+
 Where to find complete Redis documentation?
 -------------------------------------------
 
